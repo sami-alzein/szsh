@@ -3,7 +3,7 @@ export TERM="xterm-256color"
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=$HOME/.config/ezsh/oh-my-zsh
+export ZSH=$HOME/.config/szsh/oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -85,6 +85,7 @@ plugins=(
     extract
     z
     sudo
+    zsh_codex
     # httpie
     # git
     # python
@@ -96,8 +97,9 @@ plugins=(
     # zsh-wakatime          # enable if you use wakatime with 'https://github.com/wbingli/zsh-wakatime'
     )
 #plugins+=(zsh-nvm)
+bindkey '^X' create_completion
 
-# source $ZSH/oh-my-zsh.sh          # This is now run in .zshrc after importing user configs from ~/.config/ezsh/zshrc/* files 
+# source $ZSH/oh-my-zsh.sh          # This is now run in .zshrc after importing user configs from ~/.config/szsh/zshrc/* files 
 
 # User configuration
 
@@ -131,12 +133,12 @@ plugins=(
 # Add to PATH to Install and run programs with "pip install --user"
 export PATH=$PATH:~/.local/bin
 
-export PATH=$PATH:~/.config/ezsh/bin
+export PATH=$PATH:~/.config/szsh/bin
 
 NPM_PACKAGES="${HOME}/.npm"
 PATH="$NPM_PACKAGES/bin:$PATH"
 
-[[ -s "$HOME/.config/ezsh/marker/marker.sh" ]] && source "$HOME/.config/ezsh/marker/marker.sh"
+[[ -s "$HOME/.config/szsh/marker/marker.sh" ]] && source "$HOME/.config/szsh/marker/marker.sh"
 
 autoload -U compinit && compinit -C -d ~/.cache/zsh/.zcompdump        # zsh-completions
 # autoload bashcompinit                 # bash completions
@@ -201,3 +203,4 @@ ipgeo() {
     fi
 }
 
+alias killp='ps aux | fzf | awk '{print $2}' | xargs kill'

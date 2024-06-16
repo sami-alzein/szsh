@@ -1,5 +1,5 @@
 # This my personal zshrc configs. Feel free to use it and modify according to your needs
-# Place all your .zshrc configurations (including this one) in a single or multiple files under ~/.config/ezsh/zshrc/ folder
+# Place all your .zshrc configurations (including this one) in a single or multiple files under ~/.config/szsh/zshrc/ folder
 
 # Additional OH-MY-ZSH plugins to enable
 plugins+=(lol httpie docker docker-compose pyenv pip)

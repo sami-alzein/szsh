@@ -1,18 +1,18 @@
-# ezsh
+# szsh
 A simple script to setup an awesome shell environment.
 Quickly install and setup zsh and oh-my-zsh (https://github.com/robbyrussell/oh-my-zsh) with
 * powerlevel10k theme (https://github.com/romkatv/powerlevel10k)
 * Nerd-Fonts (https://github.com/ryanoasis/nerd-fonts)
 * zsh-completions (https://github.com/zsh-users/zsh-completions)
 * zsh-autosuggestions (https://github.com/zsh-users/zsh-autosuggestions)
-* zsh-syntax-highlighting (https://github.com/zsh-users/zsh-syntax-highlighting)
+* zsh-syntax-highlighting (https://github.com/zsh-users/zsh-syntax-highlighting)    
 * history-substring-search (https://github.com/zsh-users/zsh-history-substring-search)
 * fzf (https://github.com/junegunn/fzf)
 * k (https://github.com/supercrabtree/k)
 * marker (https://github.com/pindexis/marker)
 * todotxt (https://github.com/todotxt/todo.txt-cli)
 
-Sets following useful aliases and ohmyzsh plugins. **You can add more or overwrite these in your personal zsh config files under `~/.config/ezsh/zshrc/`** 
+Sets following useful aliases and ohmyzsh plugins. **You can add more or overwrite these in your personal zsh config files under `~/.config/szsh/zshrc/`** 
 * l="ls -lah"         - just type "l" instead of "ls -lah"
 * alias k="k -h"	  - show human readable filesizes, in kb, mb etc
 * e="exit"
@@ -32,7 +32,7 @@ Sets following useful aliases and ohmyzsh plugins. **You can add more or overwri
 
 ## Demo
 
-Command prompt looks like this (easily customize it by placing your configs in ~/.config/ezsh/zshrc/)
+Command prompt looks like this (easily customize it by placing your configs in ~/.config/szsh/zshrc/)
 ![prompt](https://user-images.githubusercontent.com/8462091/43674765-8bb13a76-9817-11e8-8b7b-16b8b1998408.png)
 user :  directory  :  git stats : last command exit code                     free memory: load : time
 
@@ -47,11 +47,11 @@ Requirements:
 * `python3` or `python` is required to run option '-c' which copies history from .bash_history
 
 ``` bash
-git clone https://github.com/jotyGill/ezsh
-cd ezsh
+git clone https://github.com/jotyGill/szsh
+cd szsh
 ./install.sh -c        # only run with '-c' the first time, running multiple times will duplicate history entries
 ```
-This will install the setup under `~/.config/ezsh/`
+This will install the setup under `~/.config/szsh/`
 Change your terminal's fonts to either "RobotoMono Nerd Font" or "Hack Nerd Font" or "DejaVu Sans Mono Nerd Fonts".
 You can also manually install Nerd Fonts of your choice.
 
@@ -64,14 +64,14 @@ You can also manually install Nerd Fonts of your choice.
 
 * marker's shortcut "Ctr+t" clashed with fzf so I rebound it to "Ctr +b"
 
-* All oh-my-zsh plugins are installed under ~/.config/ezsh/oh-my-zsh/plugin, Other tools (fzf,marker,todo) are installed in ~/.config/ezsh/
+* All oh-my-zsh plugins are installed under ~/.config/szsh/oh-my-zsh/plugin, Other tools (fzf,marker,todo) are installed in ~/.config/szsh/
 
 * zsh-autosuggestions is not currently enabled due to a conflict with Marker. If you don't use Marker, enable it by adding `plugins+=(zsh-autosuggestions)` into your personal config file
 
 * The look of the shell can be very easily customised[https://github.com/bhilburn/powerlevel9k#prompt-customization] by overwriting POWERLEVEL10K settings
-in your personal config file under ~/.config/ezsh/zshrc/ . See example setup under example/personal_rc.zsh
+in your personal config file under ~/.config/szsh/zshrc/ . See example setup under example/personal_rc.zsh
 
 Suggestions about more cool tools are always welcome :)
 
 ### To Uninstall
-To uninstall simply delete ~/.zshrc and ~/.config/ezsh/. The script creates a backup of your original .zshrc in the home folder with the filename indicating it's a backup. Rename it back to .zshrc
+To uninstall simply delete ~/.zshrc and ~/.config/szsh/. The script creates a backup of your original .zshrc in the home folder with the filename indicating it's a backup. Rename it back to .zshrc
