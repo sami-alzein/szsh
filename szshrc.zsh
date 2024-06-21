@@ -3,12 +3,11 @@ export TERM="xterm-256color"
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=$HOME/.config/szsh/oh-my-zsh
+export ZSH_CUSTOM=$HOME/.config/szsh/oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-
 
 POWERLEVEL9K_MODE='nerdfont-complete'
 
@@ -29,7 +28,6 @@ POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status command_execution_time background_job
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(ssh os_icon context dir vcs)
 
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
-
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -71,17 +69,16 @@ POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
+# Example format: plugins=(rails git textmate ruby lighthouse)clear
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
     zsh-completions
-    # zsh-autosuggestions     # disable when using marker, otherwise enable
+    zsh-autosuggestions # disable when using marker, otherwise enable
     zsh-syntax-highlighting
     history-substring-search
     screen
     systemd
     web-search
-    k
     extract
     z
     sudo
@@ -95,11 +92,13 @@ plugins=(
     # pyenv
     # redis-cli
     # zsh-wakatime          # enable if you use wakatime with 'https://github.com/wbingli/zsh-wakatime'
-    )
+)
 #plugins+=(zsh-nvm)
+
+source "$ZSH_CUSTOM/plugins/zsh_codex/zsh_codex.plugin.zsh"
 bindkey '^X' create_completion
 
-# source $ZSH/oh-my-zsh.sh          # This is now run in .zshrc after importing user configs from ~/.config/szsh/zshrc/* files 
+# source $ZSH/oh-my-zsh.sh          # This is now run in .zshrc after importing user configs from ~/.config/szsh/zshrc/* files
 
 # User configuration
 
@@ -140,20 +139,18 @@ PATH="$NPM_PACKAGES/bin:$PATH"
 
 [[ -s "$HOME/.config/szsh/marker/marker.sh" ]] && source "$HOME/.config/szsh/marker/marker.sh"
 
-autoload -U compinit && compinit -C -d ~/.cache/zsh/.zcompdump        # zsh-completions
+autoload -U compinit && compinit -C -d ~/.cache/zsh/.zcompdump # zsh-completions
 # autoload bashcompinit                 # bash completions
 # bashcompinit
 
-
 # QuickZsh
-SAVEHIST=50000      #save upto 50,000 lines in history. oh-my-zsh default is 10,000
+SAVEHIST=50000 #save upto 50,000 lines in history. oh-my-zsh default is 10,000
 #setopt hist_ignore_all_dups     # dont record duplicated entries in history during a single session
 
-alias myip="wget -qO- https://wtfismyip.com/text"	# quickly show external ip address
-alias l="ls --hyperlink=auto -lAhrtF"    # show all except . .. , sort by recent, / at the end of folders, clickable
+alias myip="wget -qO- https://wtfismyip.com/text" # quickly show external ip address
+alias l="ls --hyperlink=auto -lAhrtF"             # show all except . .. , sort by recent, / at the end of folders, clickable
 alias e="exit"
 alias ip="ip --color=auto"
-
 
 # CUSTOM FUNCTIONS
 
@@ -168,7 +165,6 @@ cheat() {
         curl "https://cheat.sh/$1"
     fi
 }
-
 
 # Matrix screen saver! will run if you have installed "cmatrix"
 # TMOUT=900
@@ -201,6 +197,13 @@ ipgeo() {
     else
         curl "http://api.db-ip.com/v2/free/$(myip)"
     fi
+}
+
+uninstall() {
+    echo "Uninstalling szsh..."
+    rm -rf ~/.config/szsh
+    rm -rf ~/.zshrc
+    echo "Uninstalled szsh"
 }
 
 alias killp='ps aux | fzf | awk '{print $2}' | xargs kill'

@@ -24,7 +24,7 @@ if [ "$(ls -A $ZSH_CONFIGS_DIR)" ]; then
 fi
 
 # Now source oh-my-zsh.sh so that any plugins added in ~/.config/szsh/zshrc/* files also get loaded
-source $ZSH/oh-my-zsh.sh
+source $ZSH_CUSTOM/oh-my-zsh.sh
 
 
 # Configs that can only work after "source $ZSH/oh-my-zsh.sh", such as Aliases that depend oh-my-zsh plugins
@@ -33,4 +33,3 @@ source $ZSH/oh-my-zsh.sh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_OPS="--extended"
 
-alias k="k -h"       # show human readable file sizes, in kb, mb etc

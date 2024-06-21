@@ -70,18 +70,18 @@ backup_existing_zshrc_config() {
 configure_ohmzsh() {
     if [ -d ~/.config/szsh/oh-my-zsh ]; then
         echoGreen "oh-my-zsh is already installed\n"
-        git -C ~/.config/szsh/oh-my-zsh remote set-url origin https://github.com/ohmyzsh/ohmyzsh.git
+        git -C ~/.config/szsh/oh-my-zsh remote set-url origin https://github.com/ohmyzsh/ohmyzsh.git pull
     elif [ -d ~/.oh-my-zsh ]; then
         echo -e "oh-my-zsh in already installed at '~/.oh-my-zsh'. Moving it to '~/.config/szsh/oh-my-zsh'"
         export ZSH="$HOME/.config/szsh/oh-my-zsh"
         mv ~/.oh-my-zsh ~/.config/szsh/oh-my-zsh
-        git -C ~/.config/szsh/oh-my-zsh remote set-url origin https://github.com/ohmyzsh/ohmyzsh.git
+        git -C ~/.config/szsh/oh-my-zsh remote set-url origin https://github.com/ohmyzsh/ohmyzsh.git pull
     else
         git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git ~/.config/szsh/oh-my-zsh
     fi
 }
 
-check_autosuggestions() {
+configure_autosuggestions() {
     if [ -d ~/.config/szsh/oh-my-zsh/plugins/zsh-autosuggestions ]; then
         git -C ~/.config/szsh/oh-my-zsh/plugins/zsh-autosuggestions pull
         echoGreen "zsh-autosuggestions updated\n"
@@ -92,7 +92,7 @@ check_autosuggestions() {
 
 }
 
-check_zsh_codex() {
+configure_zsh_codex() {
     if [ -d ~/.config/szsh/oh-my-zsh/plugins/zsh_codex ]; then
         git -C ~/.config/szsh/oh-my-zsh/plugins/zsh_codex pull
     else
@@ -100,7 +100,7 @@ check_zsh_codex() {
     fi
 }
 
-check_syntax_highlighting() {
+configure_syntax_highlighting() {
 
     if [ -d ~/.config/szsh/oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]; then
         cd ~/.config/szsh/oh-my-zsh/custom/plugins/zsh-syntax-highlighting && git pull
@@ -109,7 +109,7 @@ check_syntax_highlighting() {
     fi
 }
 
-check_zsh_completions() {
+configure_zsh_completions() {
     if [ -d ~/.config/szsh/oh-my-zsh/custom/plugins/zsh-completions ]; then
         git -C ~/.config/szsh/oh-my-zsh/custom/plugins/zsh-completions pull
     else
@@ -117,7 +117,7 @@ check_zsh_completions() {
     fi
 }
 
-check_zsh_history_substring_search() {
+configure_zsh_history_substring_search() {
     if [ -d ~/.config/szsh/oh-my-zsh/custom/plugins/zsh-history-substring-search ]; then
         cd ~/.config/szsh/oh-my-zsh/custom/plugins/zsh-history-substring-search && git pull
     else
@@ -154,13 +154,7 @@ install_lazydocker() {
     fi
 }
 
-install_k() {
-    if [ -d ~/.config/szsh/oh-my-zsh/custom/plugins/k ]; then
-        git -C ~/.config/szsh/oh-my-zsh/custom/plugins/k pull
-    else
-        git clone --depth 1 https://github.com/supercrabtree/k ~/.config/szsh/oh-my-zsh/custom/plugins/k
-    fi
-}
+
 
 install_fzf_tab() {
     if [ -d ~/.config/szsh/oh-my-zsh/custom/plugins/fzf-tab ]; then
@@ -178,6 +172,70 @@ install_marker() {
     fi
 
 }
+
+install_todo() {
+    if [ ! -L ~/.config/szsh/todo/bin/todo.sh ]; then
+        echoGreen "Installing todo.sh in ~/.config/szsh/todo\n"
+        mkdir -p ~/.config/szsh/bin
+        mkdir -p ~/.config/szsh/todo
+        wget -q --show-progress "https://github.com/todotxt/todo.txt-cli/releases/download/v2.12.0/todo.txt_cli-2.12.0.tar.gz" -P ~/.config/szsh/
+        tar xvf ~/.config/szsh/todo.txt_cli-2.12.0.tar.gz -C ~/.config/szsh/todo --strip 1 && rm ~/.config/szsh/todo.txt_cli-2.12.0.tar.gz
+        ln -s -f ~/.config/szsh/todo/todo.sh ~/.config/szsh/bin/todo.sh # so only .../bin is included in $PATH
+        ln -s -f ~/.config/szsh/todo/todo.cfg ~/.todo.cfg               # it expects it there or ~/todo.cfg or ~/.todo/config
+    else
+        echo -e "todo.sh is already instlled in ~/.config/szsh/todo/bin/\n"
+    fi
+}
+
+copy_history() {
+
+    if [ "$cp_hist_flag" = true ]; then
+        echo -e "\nCopying bash_history to zsh_history\n"
+        if command -v python &>/dev/null; then
+            wget -q --show-progress https://gist.githubusercontent.com/muendelezaji/c14722ab66b505a49861b8a74e52b274/raw/49f0fb7f661bdf794742257f58950d209dd6cb62/bash-to-zsh-hist.py
+            cat ~/.bash_history | python bash-to-zsh-hist.py >>~/.zsh_history
+        else
+            if command -v python3 &>/dev/null; then
+                wget -q --show-progress https://gist.githubusercontent.com/muendelezaji/c14722ab66b505a49861b8a74e52b274/raw/49f0fb7f661bdf794742257f58950d209dd6cb62/bash-to-zsh-hist.py
+                cat ~/.bash_history | python3 bash-to-zsh-hist.py >>~/.zsh_history
+            else
+                echo "Python is not installed, can't copy bash_history to zsh_history\n"
+            fi
+        fi
+    else
+        echo -e "\nNot copying bash_history to zsh_history, as --cp-hist or -c is not supplied\n"
+    fi
+}
+
+finish_installation() {
+    echoGreen "Installation complete\n"
+    if [ "$noninteractive_flag" = true ]; then
+        echo -e "Installation complete, exit terminal and enter a new zsh session\n"
+        echo -e "Make sure to change zsh to default shell by running: chsh -s $(which zsh)"
+        echo -e "In a new zsh session manually run: build-fzf-tab-module"
+    else
+        echo -e "\nSudo access is needed to change default shell\n"
+
+        if chsh -s $(which zsh) && /bin/zsh -i -c 'omz update'; then
+            echo -e "Installation complete, exit terminal and enter a new zsh session"
+            echo -e "In a new zsh session manually run: build-fzf-tab-module"
+        else
+            echo -e "Something is wrong"
+
+        fi
+    fi
+}
+
+
+    configure_zsh_codex() {
+        if [ -f ~/.config/szsh/oh-my-zsh/plugins/zsh_codex/zsh_codex.plugin.zsh ]; then
+            echoGreen "zsh_codex is installed"
+            sed -i "s/TOBEREPLACED/$1/g" ~/.config/szsh/oh-my-zsh/plugins/zsh_codex/zsh_codex.plugin.zsh
+        else
+            git clone --depth=1
+        fi
+    }
+
 
 #############################################################################################
 ####################################### Utilities ###########################################
@@ -215,12 +273,14 @@ detect_missing_packages
 
 install_missing_packages
 
-check_quickzsh_installation
+configure_quickzsh_installation
 
 backup_existing_zshrc_config
 
-echoGreen -e "The setup will be installed in '~/.config/szsh'\n"
-echoYellow -e "Place your personal zshrc config files under '~/.config/szsh/zshrc/'\n"
+echoGreen "The setup will be installed in '~/.config/szsh'\n"
+
+echoYellow "Place your personal zshrc config files under '~/.config/szsh/zshrc/'\n"
+
 mkdir -p ~/.config/szsh/zshrc
 
 echoGreen "Installing oh-my-zsh\n"
@@ -238,15 +298,17 @@ if [ -f ~/.zcompdump ]; then
     mv ~/.zcompdump* ~/.cache/zsh/
 fi
 
-check_autosuggestions
+configure_autosuggestions
 
-check_zsh_codex
+configure_zsh_codex
 
-check_syntax_highlighting
+configure_syntax_highlighting
 
-check_zsh_completions
+configure_zsh_completions
 
-check_zsh_history_substring_search
+configure_zsh_history_substring_search
+
+install_powerlevel10k
 
 install_marker
 # INSTALL FONTS
@@ -261,8 +323,6 @@ fc-cache -fv ~/.fonts
 
 install_fzf
 
-install_powerlevel10k
-
 install_lazydocker
 
 install_k
@@ -271,57 +331,10 @@ install_fzf_tab
 
 install_marker
 
-# if git clone --depth 1 https://github.com/todotxt/todo.txt-cli.git ~/.config/szsh/todo; then :
-# else
-#     cd ~/.config/szsh/todo && git fetch --all && git reset --hard origin/master
-# fi
-# mkdir ~/.config/szsh/todo/bin ; cp -f ~/.config/szsh/todo/todo.sh ~/.config/szsh/todo/bin/todo.sh # cp todo.sh to ./bin so only it is included in $PATH
-# #touch ~/.todo/config     # needs it, otherwise spits error , yeah a bug in todo
-# ln -s ~/.config/szsh/todo ~/.todo
+install_todo
 
+copy_history
 
-if [ ! -L ~/.config/szsh/todo/bin/todo.sh ]; then
-    echoGreen "Installing todo.sh in ~/.config/szsh/todo\n"
-    mkdir -p ~/.config/szsh/bin
-    mkdir -p ~/.config/szsh/todo
-    wget -q --show-progress "https://github.com/todotxt/todo.txt-cli/releases/download/v2.12.0/todo.txt_cli-2.12.0.tar.gz" -P ~/.config/szsh/
-    tar xvf ~/.config/szsh/todo.txt_cli-2.12.0.tar.gz -C ~/.config/szsh/todo --strip 1 && rm ~/.config/szsh/todo.txt_cli-2.12.0.tar.gz
-    ln -s -f ~/.config/szsh/todo/todo.sh ~/.config/szsh/bin/todo.sh # so only .../bin is included in $PATH
-    ln -s -f ~/.config/szsh/todo/todo.cfg ~/.todo.cfg               # it expects it there or ~/todo.cfg or ~/.todo/config
-else
-    echo -e "todo.sh is already instlled in ~/.config/szsh/todo/bin/\n"
-fi
-if [ "$cp_hist_flag" = true ]; then
-    echo -e "\nCopying bash_history to zsh_history\n"
-    if command -v python &>/dev/null; then
-        wget -q --show-progress https://gist.githubusercontent.com/muendelezaji/c14722ab66b505a49861b8a74e52b274/raw/49f0fb7f661bdf794742257f58950d209dd6cb62/bash-to-zsh-hist.py
-        cat ~/.bash_history | python bash-to-zsh-hist.py >>~/.zsh_history
-    else
-        if command -v python3 &>/dev/null; then
-            wget -q --show-progress https://gist.githubusercontent.com/muendelezaji/c14722ab66b505a49861b8a74e52b274/raw/49f0fb7f661bdf794742257f58950d209dd6cb62/bash-to-zsh-hist.py
-            cat ~/.bash_history | python3 bash-to-zsh-hist.py >>~/.zsh_history
-        else
-            echo "Python is not installed, can't copy bash_history to zsh_history\n"
-        fi
-    fi
-else
-    echo -e "\nNot copying bash_history to zsh_history, as --cp-hist or -c is not supplied\n"
-fi
+finish_installation
 
-if [ "$noninteractive_flag" = true ]; then
-    echo -e "Installation complete, exit terminal and enter a new zsh session\n"
-    echo -e "Make sure to change zsh to default shell by running: chsh -s $(which zsh)"
-    echo -e "In a new zsh session manually run: build-fzf-tab-module"
-else
-    # source ~/.zshrc
-    echo -e "\nSudo access is needed to change default shell\n"
-
-    if chsh -s $(which zsh) && /bin/zsh -i -c 'omz update'; then
-        echo -e "Installation complete, exit terminal and enter a new zsh session"
-        echo -e "In a new zsh session manually run: build-fzf-tab-module"
-    else
-        echo -e "Something is wrong"
-
-    fi
-fi
 exit
