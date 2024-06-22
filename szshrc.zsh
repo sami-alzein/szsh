@@ -206,4 +206,4 @@ uninstall() {
     echo "Uninstalled szsh"
 }
 
-alias killp='ps aux | fzf | awk '{print $2}' | xargs kill'
+alias fzfkillps='ps aux | fzf | awk '{print $2}' | xargs kill'
