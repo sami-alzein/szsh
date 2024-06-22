@@ -7,7 +7,6 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"foxundermoon.shell-format",
 				"timonwong.shellcheck",
 				"truman.autocomplate-shell",
 				"woozy-masta.shell-script-ide"

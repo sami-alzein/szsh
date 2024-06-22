@@ -1,26 +1,43 @@
 #!/bin/bash
 
+
+cp_hist_flag=false
+noninteractive_flag=true
+zsh_codex_flag=false
+
+
+OH_MY_ZSH_FOLDER=$HOME/.config/szsh/oh-my-zsh
+OHMYZSH_PLUGIN_PATH="$OH_MY_ZSH_FOLDER/plugins"
+
+
 #############################################################################################
 ######################################### VARIABLES #########################################
 #############################################################################################
-# Flags to determine if the arguments were passed
-cp_hist_flag=false
-noninteractive_flag=false
-zsh_codex_flag=false
-OH_MY_ZSH_FOLDER=$HOME/.config/szsh/oh-my-zsh
-OH_MY_ZSHR_GIT_REPO="https://github.com/ohmyzsh/ohmyzsh.git"
-OHMYZSH_PLUGIN_PATH="$OH_MY_ZSH_FOLDER/plugins"
-AUTOSUGGESTIONS_PLUGIN_GIT_REPO="https://github.com/zsh-users/zsh-autosuggestions"
-ZHS_CODEX_PLUGIN_REPO="https://github.com/tom-doerr/zsh_codex.git"
-FZF_REPO="https://github.com/junegunn/fzf.git"
-ZSH_SYNTAX_HIGHLIGHTING_REPO="https://github.com/zsh-users/zsh-syntax-highlighting.git"
-ZSH_COMPLETIONS_REPO="https://github.com/zsh-users/zsh-completions"
-ZSH_HISTORY_SUBSTRING_SEARCH_REPO="https://github.com/zsh-users/zsh-history-substring-search"
-POWERLEVEL10K_REPO="https://github.com/romkatv/powerlevel10k.git"
-FZF_TAB_REPO="https://github.com/Aloxaf/fzf-tab"
-LAZYDOCKER_REPO="https://github.com/jesseduffield/lazydocker.git"
-MARKER_REPO="https://github.com/jotyGill/marker"
 
+
+OH_MY_ZSHR_REPO="https://github.com/ohmyzsh/ohmyzsh.git"
+AUTOSUGGESTIONS_PLUGIN_REPO="https://github.com/zsh-users/zsh-autosuggestions.git"
+ZHS_CODEX_PLUGIN_REPO="https://github.com/tom-doerr/zsh_codex.git"
+ZSH_SYNTAX_HIGHLIGHTING_REPO="https://github.com/zsh-users/zsh-syntax-highlighting.git"
+ZSH_COMPLETIONS_REPO="https://github.com/zsh-users/zsh-completions.git"
+ZSH_HISTORY_SUBSTRING_SEARCH_REPO="https://github.com/zsh-users/zsh-history-substring-search.git"
+POWERLEVEL10K_REPO="https://github.com/romkatv/powerlevel10k.git"
+
+
+
+################################################################################################
+####################################### PROGRAMS REPOS #########################################
+################################################################################################
+
+
+FZF_REPO="https://github.com/junegunn/fzf.git"
+FZF_TAB_REPO="https://github.com/Aloxaf/fzf-tab.git"
+LAZYDOCKER_REPO="https://github.com/jesseduffield/lazydocker.git"
+MARKER_REPO="https://github.com/jotyGill/marker.git"
+
+################################################################################################
+####################################### PLUGIN PATHS ###########################################
+################################################################################################
 
 FZF_TAB_PLUGIN_PATH="$OHMYZSH_PLUGIN_PATH/fzf-tab"
 ZSH_SYNTAX_HIGHLIGHTING_PATH="$OHMYZSH_PLUGIN_PATH/zsh-syntax-highlighting"
@@ -29,8 +46,15 @@ POWERLEVEL_10K_PATH=$OH_MY_ZSH_FOLDER/themes/powerlevel10k
 ZSH_CODEX_PLUGIN_PATH="$OHMYZSH_PLUGIN_PATH/zsh_codex"
 ZSH_COMPLETION_PLUGIN_PATH="$OHMYZSH_PLUGIN_PATH/zsh-completions"
 ZSH_HISTORY_SUBSTRING_PLUGIN_PATH=$OHMYZSH_PLUGIN_PATH/zsh-history-substring-search
+
+
+################################################################################################
+####################################### INSTALLATION PATHS #####################################
+################################################################################################
 FZF_INSTALLATION_PATH=$HOME/.config/szsh/fzf    
 LAZYDOCKER_INSTALLATION_PATH=$HOME/.config/szsh/lazydocker
+MARKER_PATH=$HOME/.config/szsh/marker
+
 
 # Loop through all arguments
 for arg in "$@"; do
@@ -38,8 +62,8 @@ for arg in "$@"; do
     --cp-hist | -c)
         cp_hist_flag=true
         ;;
-    --non-interactive | -n)
-        noninteractive_flag=true
+    --interactive | -n)
+        noninteractive_flag=false
         ;;
     --codex | -x)
         zsh_codex_flag=true
@@ -58,10 +82,6 @@ done
 
 echoIULRed() {
     echo -e "\\033[3;4;31m$*\\033[m"
-}
-
-echoBlue() {
-    echo -e "\\033[34m$*\\033[m"
 }
 
 echoYellow() {
@@ -95,19 +115,28 @@ detect_missing_packages() {
     done
 }
 
+perform_update() {
+    if sudo apt update || sudo pacman -Sy || sudo dnf check-update || sudo yum check-update || brew update || pkg update; then
+        echoGreen "System updated\n"
+    else
+        echoRed "System update failed\n"
+    fi
+}
+
+
 install_missing_packages() {
+    perform_update
     for package in "${missing_packages[@]}"; do
         if sudo apt install -y "$package" || sudo pacman -S "$package" || sudo dnf install -y "$package" || sudo yum install -y "$package" || sudo brew install "$package" || pkg install "$package"; then
-            echo -e "$package Installed\n"
+            echoGreen "$package Installed\n"
         else
-            echo -e "Please install the following packages first, then try again: $package \n" && exit
+            echoYellow "Please install the following packages first, then try again: $package \n" && exit
         fi
     done
 }
 
 
 backup_existing_zshrc_config() {
-    # -n prevents overwriting existing files
     if mv -n $HOME/.zshrc $HOME/.zshrc-backup-"$(date +"%Y-%m-%d")"; then # backup .zshrc
         echoGreen -e "Backed up the current .zshrc to .zshrc-backup-date\n"
     fi
@@ -118,14 +147,14 @@ backup_existing_zshrc_config() {
 configure_ohmzsh() {
     if [ -d "$OH_MY_ZSH_FOLDER" ]; then
         echoGreen "oh-my-zsh is already installed\n"
-        git -C "$OH_MY_ZSH_FOLDER" remote set-url origin "$OH_MY_ZSHR_GIT_REPO" pull
+        git -C "$OH_MY_ZSH_FOLDER" remote set-url origin "$OH_MY_ZSHR_REPO" pull
     elif [ -d "$HOME/.oh-my-zsh" ]; then
-        echo -e "oh-my-zsh in already installed at '$HOME/.oh-my-zsh'. Moving it to '$HOME/.config/szsh/oh-my-zsh'"
+        echoCyan "oh-my-zsh in already installed at '$HOME/.oh-my-zsh'. Moving it to '$HOME/.config/szsh/oh-my-zsh'"
         export ZSH="$HOME/.config/szsh/oh-my-zsh"
         mv "$HOME/.oh-my-zsh" "$OH_MY_ZSH_FOLDER"
-        git -C "$OH_MY_ZSH_FOLDER" remote set-url origin "$OH_MY_ZSHR_GIT_REPO" pull
+        git -C "$OH_MY_ZSH_FOLDER" remote set-url origin "$OH_MY_ZSHR_REPO" pull
     else
-        git clone --depth=1 $OH_MY_ZSHR_GIT_REPO "$OH_MY_ZSH_FOLDER"
+        git clone --depth=1 $OH_MY_ZSHR_REPO "$OH_MY_ZSH_FOLDER"
     fi
 }
 
@@ -134,16 +163,25 @@ configure_autosuggestions() {
         git -C "$ZSH_AUTOSUGGESTION_PATH" pull
         echoGreen "zsh-autosuggestions updated\n"
     else
-        git clone --depth=1 $AUTOSUGGESTIONS_PLUGIN_GIT_REPO "$ZSH_AUTOSUGGESTION_PATH"
+        git clone --depth=1 $AUTOSUGGESTIONS_PLUGIN_REPO "$ZSH_AUTOSUGGESTION_PATH"
         echoGreen "zsh-autosuggestions installed\n"
     fi
 
 }
 
 configure_zsh_codex() {
+
+    if [ -f "$HOME/.config/openaiapirc" ];
+    then
+        echo -e "openai api key already exists\n"
+    else
+        echo -e "export OPENAI_API_KEY=$1" > $HOME/.config/openaiapirc
+    fi
+
     if [ -d "$ZSH_CODEX_PLUGIN_PATH" ]; then
         git -C "$ZSH_CODEX_PLUGIN_PATH" pull
     else
+        pip3 install openai
         git clone --depth=1 "$ZHS_CODEX_PLUGIN_REPO" "$ZSH_CODEX_PLUGIN_PATH"
     fi
 }
@@ -211,8 +249,8 @@ install_fzf_tab() {
 }
 
 install_marker() {
-    if [ -d $HOME/.config/szsh/marker ]; then
-        git -C $HOME/.config/szsh/marker pull
+    if [ -d $MARKER_PATH ]; then
+        git -C $MARKER_PATH pull
     else
         git clone --depth 1 $MARKER_REPO $HOME/.config/szsh/marker
     fi
@@ -272,15 +310,6 @@ finish_installation() {
     fi
 }
 
-configure_zsh_codex() {
-    if [ -f "$ZSH_CODEX_PLUGIN_PATH"/zsh_codex.plugin.zsh ]; then
-        echoGreen "zsh_codex is installed"
-        sed -i "s/TOBEREPLACED/$1/g" "$ZSH_CODEX_PLUGIN_PATH"/zsh_codex.plugin.zsh
-    else
-        git clone --depth=1 "$ZHS_CODEX_PLUGIN_REPO" "$ZSH_CODEX_PLUGIN_PATH"
-    fi
-}
-
 
 
 #############################################################################################
@@ -326,7 +355,11 @@ configure_zsh_history_substring_search
 
 if [ "$zsh_codex_flag" = true ]; then
     echoCyan "configuring zsh_codex\n"
-    read -s -p "Enter your zsh_codex" TOKEN
+    read -s -p "Enter your zsh_codex" SECRET_KEY
+
+    export BASE_URL=${BASE_URL:-"https://api.groq.com/openai/v1"}
+    export MODEL=${MODEL:-"https://api.groq.com/openai/v1"}
+
     configure_zsh_codex "$TOKEN"
 fi
 
