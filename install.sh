@@ -170,13 +170,17 @@ configure_autosuggestions() {
 }
 
 configure_zsh_codex() {
+    
+    echoCyan "configuring zsh_codex\n"
 
-    if [ -f "$HOME/.config/openaiapirc" ];
-    then
-        echo -e "openai api key already exists\n"
-    else
-        echo -e "export OPENAI_API_KEY=$1" > $HOME/.config/openaiapirc
-    fi
+    # export BASE_URL=${BASE_URL:-"https://api.groq.com/openai/v1"}
+    # export MODEL=${MODEL:-"https://api.groq.com/openai/v1"}
+
+    read -s -p "Enter your openai api key: "
+
+    OPENAI_API_KEY=$REPLY
+    sed -i "s/TOBEREPLEACED/$OPENAI_API_KEY/g" $HOME/.config/openaiapirc
+
 
     if [ -d "$ZSH_CODEX_PLUGIN_PATH" ]; then
         git -C "$ZSH_CODEX_PLUGIN_PATH" pull
@@ -184,6 +188,10 @@ configure_zsh_codex() {
         pip3 install openai
         git clone --depth=1 "$ZHS_CODEX_PLUGIN_REPO" "$ZSH_CODEX_PLUGIN_PATH"
     fi
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+
+    echo "The script is located in: $SCRIPT_DIR"
+    cp $SCRIPT_DIR/openaiapirc $HOME/.config/
 }
 
 configure_syntax_highlighting() {
@@ -320,7 +328,6 @@ detect_missing_packages
 
 install_missing_packages
 
-configure_quickzsh_installation
 
 backup_existing_zshrc_config
 
@@ -354,13 +361,7 @@ configure_zsh_completions
 configure_zsh_history_substring_search
 
 if [ "$zsh_codex_flag" = true ]; then
-    echoCyan "configuring zsh_codex\n"
-    read -s -p "Enter your zsh_codex" SECRET_KEY
-
-    export BASE_URL=${BASE_URL:-"https://api.groq.com/openai/v1"}
-    export MODEL=${MODEL:-"https://api.groq.com/openai/v1"}
-
-    configure_zsh_codex "$TOKEN"
+    configure_zsh_codex 
 fi
 
 
