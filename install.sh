@@ -43,11 +43,11 @@ MARKER_REPO="https://github.com/jotyGill/marker.git"
 FZF_TAB_PLUGIN_PATH="$OHMYZSH_CUSTOM_PLUGIN_PATH/fzf-tab"
 ZSH_SYNTAX_HIGHLIGHTING_PATH="$OHMYZSH_CUSTOM_PLUGIN_PATH/zsh-syntax-highlighting"
 ZSH_AUTOSUGGESTION_PATH="$OHMYZSH_CUSTOM_PLUGIN_PATH/zsh-autosuggestions"
-POWERLEVEL_10K_PATH=$OHMYZSH_CUSTOM_THEME_PATH/powerlevel10k
-ZSH_CODEX_PLUGIN_PATH="$OHMYZSH_PLUGIN_PATH/zsh_codex"
+ZSH_CODEX_PLUGIN_PATH="$OHMYZSH_CUSTOM_PLUGIN_PATH/zsh_codex"
 ZSH_COMPLETION_PLUGIN_PATH="$OHMYZSH_CUSTOM_PLUGIN_PATH/zsh-completions"
 ZSH_HISTORY_SUBSTRING_PLUGIN_PATH=$OHMYZSH_CUSTOM_PLUGIN_PATH/zsh-history-substring-search
 
+POWERLEVEL_10K_PATH=$OHMYZSH_CUSTOM_THEME_PATH/powerlevel10k
 
 ################################################################################################
 ####################################### INSTALLATION PATHS #####################################
@@ -180,12 +180,9 @@ configure_zsh_codex() {
     echoCyan "configuring zsh_codex\n"
     cp openaiapirc $HOME/.config/
 
-    # export BASE_URL=${BASE_URL:-"https://api.groq.com/openai/v1"}
-    # export MODEL=${MODEL:-"https://api.groq.com/openai/v1"}
-
     read -s -p "Enter your openai api key: "
-
     OPENAI_API_KEY=$REPLY
+
     sed -i "s/TOBEREPLEACED/$OPENAI_API_KEY/g" $HOME/.config/openaiapirc
 
 
@@ -195,10 +192,6 @@ configure_zsh_codex() {
         pip3 install openai
         git clone --depth=1 "$ZHS_CODEX_PLUGIN_REPO" "$ZSH_CODEX_PLUGIN_PATH"
     fi
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-
-    echo "The script is located in: $SCRIPT_DIR"
-    cp $SCRIPT_DIR/openaiapirc $HOME/.config/
 }
 
 configure_syntax_highlighting() {

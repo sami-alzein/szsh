@@ -46,7 +46,6 @@ plugins=(
     extract
     z
     sudo
-#    zsh_codex
     docker
 )
 
