@@ -1,18 +1,18 @@
 ################# DO NOT MODIFY THIS FILE #######################
-####### PLACE YOUR CONFIGS IN ~/.config/szsh/zshrc FOLDER #######
+####### PLACE YOUR CONFIGS IN ~/.config/czsh/zshrc FOLDER #######
 #################################################################
 
-# This file is created by szsh setup.
-# Place all your .zshrc configurations / overrides in a single or multiple files under ~/.config/szsh/zshrc/ folder
+# This file is created by czsh setup.
+# Place all your .zshrc configurations / overrides in a single or multiple files under ~/.config/czsh/zshrc/ folder
 # Your original .zshrc is backed up at ~/.zshrc-backup-%y-%m-%d
 
 
-# Load szsh configurations
-source "$HOME/.config/szsh/szshrc.zsh"
+# Load czsh configurations
+source "$HOME/.config/czsh/czshrc.zsh"
 
-# Any zshrc configurations under the folder ~/.config/szsh/zshrc/ will override the default szsh configs.
+# Any zshrc configurations under the folder ~/.config/czsh/zshrc/ will override the default czsh configs.
 # Place all of your personal configurations over there
-ZSH_CONFIGS_DIR="$HOME/.config/szsh/zshrc"
+ZSH_CONFIGS_DIR="$HOME/.config/czsh/zshrc"
 
 if [ "$(ls -A $ZSH_CONFIGS_DIR)" ]; then
     for file in "$ZSH_CONFIGS_DIR"/* "$ZSH_CONFIGS_DIR"/.*; do
@@ -23,7 +23,7 @@ if [ "$(ls -A $ZSH_CONFIGS_DIR)" ]; then
     done
 fi
 
-# Now source oh-my-zsh.sh so that any plugins added in ~/.config/szsh/zshrc/* files also get loaded
+# Now source oh-my-zsh.sh so that any plugins added in ~/.config/czsh/zshrc/* files also get loaded
 source $ZSH_CUSTOM/oh-my-zsh.sh
 
 

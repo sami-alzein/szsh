@@ -3,7 +3,8 @@ export TERM="xterm-256color"
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH_CUSTOM=$HOME/.config/szsh/oh-my-zsh
+export ZSH_CUSTOM="$HOME/.config/czsh/oh-my-zsh"
+export ZSH="$HOME/.config/czsh/oh-my-zsh";
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -54,14 +55,14 @@ plugins=(
 
 export PATH=$PATH:~/.local/bin
 
-export PATH=$PATH:~/.config/szsh/bin
+export PATH=$PATH:~/.config/czsh/bin
 
 NPM_PACKAGES="${HOME}/.npm"
 PATH="$NPM_PACKAGES/bin:$PATH"
 
-[[ -s "$HOME/.config/szsh/marker/marker.sh" ]] && source "$HOME/.config/szsh/marker/marker.sh"
+[[ -s "$HOME/.config/czsh/marker/marker.sh" ]] && source "$HOME/.config/czsh/marker/marker.sh"
 
-autoload -U compinit && compinit -C -d ~/.cache/zsh/.zcompdump # zsh-completions
+
 
 
 SAVEHIST=50000 #save upto 50,000 lines in history. oh-my-zsh default is 10,000
@@ -116,11 +117,5 @@ ipgeo() {
     fi
 }
 
-uninstall() {
-    echo "Uninstalling szsh..."
-    rm -rf ~/.config/szsh
-    rm -rf ~/.zshrc
-    echo "Uninstalled szsh"
-}
 
-alias kp='ps -ef | fzf | awk '{print $2}' | xargs sudo kill -9'
+alias kp='ps -ef | fzf --multi | awk '{print $2}' | xargs sudo kill -9'

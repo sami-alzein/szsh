@@ -6,9 +6,10 @@ noninteractive_flag=true
 zsh_codex_flag=false
 
 
-OH_MY_ZSH_FOLDER=$HOME/.config/szsh/oh-my-zsh
+OH_MY_ZSH_FOLDER="$HOME/.config/czsh/oh-my-zsh"
 OHMYZSH_PLUGIN_PATH="$OH_MY_ZSH_FOLDER/plugins"
-
+OHMYZSH_CUSTOM_PLUGIN_PATH="$OH_MY_ZSH_FOLDER/plugins"
+OHMYZSH_CUSTOM_THEME_PATH="$OH_MY_ZSH_FOLDER/themes"
 
 #############################################################################################
 ######################################### VARIABLES #########################################
@@ -39,21 +40,21 @@ MARKER_REPO="https://github.com/jotyGill/marker.git"
 ####################################### PLUGIN PATHS ###########################################
 ################################################################################################
 
-FZF_TAB_PLUGIN_PATH="$OHMYZSH_PLUGIN_PATH/fzf-tab"
-ZSH_SYNTAX_HIGHLIGHTING_PATH="$OHMYZSH_PLUGIN_PATH/zsh-syntax-highlighting"
-ZSH_AUTOSUGGESTION_PATH="$OHMYZSH_PLUGIN_PATH/zsh-autosuggestions"
-POWERLEVEL_10K_PATH=$OH_MY_ZSH_FOLDER/themes/powerlevel10k
+FZF_TAB_PLUGIN_PATH="$OHMYZSH_CUSTOM_PLUGIN_PATH/fzf-tab"
+ZSH_SYNTAX_HIGHLIGHTING_PATH="$OHMYZSH_CUSTOM_PLUGIN_PATH/zsh-syntax-highlighting"
+ZSH_AUTOSUGGESTION_PATH="$OHMYZSH_CUSTOM_PLUGIN_PATH/zsh-autosuggestions"
+POWERLEVEL_10K_PATH=$OHMYZSH_CUSTOM_THEME_PATH/powerlevel10k
 ZSH_CODEX_PLUGIN_PATH="$OHMYZSH_PLUGIN_PATH/zsh_codex"
-ZSH_COMPLETION_PLUGIN_PATH="$OHMYZSH_PLUGIN_PATH/zsh-completions"
-ZSH_HISTORY_SUBSTRING_PLUGIN_PATH=$OHMYZSH_PLUGIN_PATH/zsh-history-substring-search
+ZSH_COMPLETION_PLUGIN_PATH="$OHMYZSH_CUSTOM_PLUGIN_PATH/zsh-completions"
+ZSH_HISTORY_SUBSTRING_PLUGIN_PATH=$OHMYZSH_CUSTOM_PLUGIN_PATH/zsh-history-substring-search
 
 
 ################################################################################################
 ####################################### INSTALLATION PATHS #####################################
 ################################################################################################
-FZF_INSTALLATION_PATH=$HOME/.config/szsh/fzf    
-LAZYDOCKER_INSTALLATION_PATH=$HOME/.config/szsh/lazydocker
-MARKER_PATH=$HOME/.config/szsh/marker
+FZF_INSTALLATION_PATH=$HOME/.config/czsh/fzf    
+LAZYDOCKER_INSTALLATION_PATH=$HOME/.config/czsh/lazydocker
+MARKER_PATH=$HOME/.config/czsh/marker
 
 
 # Loop through all arguments
@@ -147,14 +148,19 @@ backup_existing_zshrc_config() {
 configure_ohmzsh() {
     if [ -d "$OH_MY_ZSH_FOLDER" ]; then
         echoGreen "oh-my-zsh is already installed\n"
-        git -C "$OH_MY_ZSH_FOLDER" remote set-url origin "$OH_MY_ZSHR_REPO" pull
+        git -C "$OH_MY_ZSH_FOLDER" remote set-url origin "$OH_MY_ZSHR_REPO"
+         export ZSH=$OH_MY_ZSH_FOLDER;
+        git -C "$OH_MY_ZSH_FOLDER" pull
     elif [ -d "$HOME/.oh-my-zsh" ]; then
-        echoCyan "oh-my-zsh in already installed at '$HOME/.oh-my-zsh'. Moving it to '$HOME/.config/szsh/oh-my-zsh'"
-        export ZSH="$HOME/.config/szsh/oh-my-zsh"
+        echoCyan "oh-my-zsh in already installed at '$HOME/.oh-my-zsh'. Moving it to '$HOME/.config/czsh/oh-my-zsh'"
+        export ZSH=$OH_MY_ZSH_FOLDER;
         mv "$HOME/.oh-my-zsh" "$OH_MY_ZSH_FOLDER"
-        git -C "$OH_MY_ZSH_FOLDER" remote set-url origin "$OH_MY_ZSHR_REPO" pull
+        git -C "$OH_MY_ZSH_FOLDER" remote set-url origin "$OH_MY_ZSHR_REPO"
+        git -C "$OH_MY_ZSH_FOLDER" pull
     else
         git clone --depth=1 $OH_MY_ZSHR_REPO "$OH_MY_ZSH_FOLDER"
+        export ZSH=$OH_MY_ZSH_FOLDER;
+
     fi
 }
 
@@ -260,22 +266,22 @@ install_marker() {
     if [ -d $MARKER_PATH ]; then
         git -C $MARKER_PATH pull
     else
-        git clone --depth 1 $MARKER_REPO $HOME/.config/szsh/marker
+        git clone --depth 1 $MARKER_REPO $HOME/.config/czsh/marker
     fi
 
 }
 
 install_todo() {
-    if [ ! -L $HOME/.config/szsh/todo/bin/todo.sh ]; then
-        echoGreen "Installing todo.sh in $HOME/.config/szsh/todo\n"
-        mkdir -p $HOME/.config/szsh/bin
-        mkdir -p $HOME/.config/szsh/todo
-        wget -q --show-progress "https://github.com/todotxt/todo.txt-cli/releases/download/v2.12.0/todo.txt_cli-2.12.0.tar.gz" -P $HOME/.config/szsh/
-        tar xvf $HOME/.config/szsh/todo.txt_cli-2.12.0.tar.gz -C $HOME/.config/szsh/todo --strip 1 && rm $HOME/.config/szsh/todo.txt_cli-2.12.0.tar.gz
-        ln -s -f $HOME/.config/szsh/todo/todo.sh $HOME/.config/szsh/bin/todo.sh # so only .../bin is included in $PATH
-        ln -s -f $HOME/.config/szsh/todo/todo.cfg $HOME/.todo.cfg               # it expects it there or $HOME/todo.cfg or $HOME/.todo/config
+    if [ ! -L $HOME/.config/czsh/todo/bin/todo.sh ]; then
+        echoGreen "Installing todo.sh in $HOME/.config/czsh/todo\n"
+        mkdir -p $HOME/.config/czsh/bin
+        mkdir -p $HOME/.config/czsh/todo
+        wget -q --show-progress "https://github.com/todotxt/todo.txt-cli/releases/download/v2.12.0/todo.txt_cli-2.12.0.tar.gz" -P $HOME/.config/czsh/
+        tar xvf $HOME/.config/czsh/todo.txt_cli-2.12.0.tar.gz -C $HOME/.config/czsh/todo --strip 1 && rm $HOME/.config/czsh/todo.txt_cli-2.12.0.tar.gz
+        ln -s -f $HOME/.config/czsh/todo/todo.sh $HOME/.config/czsh/bin/todo.sh # so only .../bin is included in $PATH
+        ln -s -f $HOME/.config/czsh/todo/todo.cfg $HOME/.todo.cfg               # it expects it there or $HOME/todo.cfg or $HOME/.todo/config
     else
-        echo -e "todo.sh is already instlled in $HOME/.config/szsh/todo/bin/\n"
+        echo -e "todo.sh is already instlled in $HOME/.config/czsh/todo/bin/\n"
     fi
 }
 
@@ -331,20 +337,22 @@ install_missing_packages
 
 backup_existing_zshrc_config
 
-echoGreen "The setup will be installed in '$HOME/.config/szsh'\n"
+echoGreen "The setup will be installed in '$HOME/.config/czsh'\n"
 
-echoYellow "Place your personal zshrc config files under '$HOME/.config/szsh/zshrc/'\n"
+echoYellow "Place your personal zshrc config files under '$HOME/.config/czsh/zshrc/'\n"
 
-mkdir -p $HOME/.config/szsh/zshrc
+mkdir -p $HOME/.config/czsh/zshrc
 
 echoGreen "Installing oh-my-zsh\n"
 
 configure_ohmzsh
 
-cp -f .zshrc $HOME/
-cp -f szshrc.zsh $HOME/.config/szsh/
+pwd
+ls
+cp -f ./.zshrc $HOME/
+cp -f ./czshrc.zsh $HOME/.config/czsh/
 
-mkdir -p $HOME/.config/szsh/zshrc # PLACE YOUR ZSHRC CONFIGURATIONS OVER THERE
+mkdir -p $HOME/.config/czsh/zshrc # PLACE YOUR ZSHRC CONFIGURATIONS OVER THERE
 mkdir -p $HOME/.cache/zsh/        # this will be used to store .zcompdump zsh completion cache files which normally clutter $HOME
 mkdir -p $HOME/.fonts             # Create .fonts if doesn't exist
 
@@ -371,9 +379,17 @@ install_marker
 
 echoCyan "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono\n"
 
-wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/HackNerdFont-Regular.ttf -P $HOME/.fonts/
-wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/RobotoMono/Regular/RobotoMonoNerdFont-Regular.ttf -P $HOME/.fonts/
-wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/DejaVuSansMNerdFont-Regular.ttf -P $HOME/.fonts/
+if [ ! -f $HOME/.fonts/HackNerdFont-Regular.ttf ]; then
+    wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/HackNerdFont-Regular.ttf -P $HOME/.fonts/
+fi
+
+if [ ! -f $HOME/.fonts/RobotoMonoNerdFont-Regular.ttf ]; then
+    wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/RobotoMono/Regular/RobotoMonoNerdFont-Regular.ttf -P $HOME/.fonts/
+fi
+
+if [ ! -f $HOME/.fonts/DejaVuSansMNerdFont-Regular.ttf ]; then
+    wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/DejaVuSansMNerdFont-Regular.ttf -P $HOME/.fonts/
+fi
 
 fc-cache -fv $HOME/.fonts
 
