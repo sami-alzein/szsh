@@ -386,7 +386,6 @@ install_fzf
 
 install_lazydocker
 
-install_k
 
 install_fzf_tab
 
