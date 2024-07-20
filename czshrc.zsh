@@ -6,9 +6,6 @@ export TERM="xterm-256color"
 export ZSH_CUSTOM="$HOME/.config/czsh/oh-my-zsh/custom"
 export ZSH="$HOME/.config/czsh/oh-my-zsh";
 
-# Set name of the theme to load. Optionally, if you set this to "random"
-# it'll load a random theme each time that oh-my-zsh is loaded.
-# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 
 POWERLEVEL9K_MODE='nerdfont-complete'
 
@@ -47,10 +44,14 @@ plugins=(
     z
     sudo
     docker
+    fzf-tab
 )
 
-source "$ZSH_CUSTOM/plugins/zsh_codex/zsh_codex.plugin.zsh"
-bindkey '^X' create_completion
+if [[ -f $ZSH_CUSTOM/plugins/zsh_codex/zsh_codex.plugin.zsh ]]; then
+    source $ZSH_CUSTOM/plugins/zsh_codex/zsh_codex.plugin.zsh
+    bindkey '^X' create_completion
+fi
+
 
 export PATH=$PATH:~/.local/bin
 
@@ -117,4 +118,4 @@ ipgeo() {
 }
 
 
-alias kp='ps -ef | fzf --multi | awk '{print $2}' | xargs sudo kill -9'
+alias kp='ps -ef | fzf --multi | awk '\''{print $2}'\'' | xargs sudo kill -9'

@@ -7,7 +7,6 @@ zsh_codex_flag=false
 
 
 OH_MY_ZSH_FOLDER="$HOME/.config/czsh/oh-my-zsh"
-OHMYZSH_PLUGIN_PATH="$OH_MY_ZSH_FOLDER/plugins"
 OHMYZSH_CUSTOM_PLUGIN_PATH="$OH_MY_ZSH_FOLDER/custom/plugins"
 OHMYZSH_CUSTOM_THEME_PATH="$OH_MY_ZSH_FOLDER/custom/themes"
 
@@ -85,19 +84,19 @@ echoIULRed() {
     echo -e "\\033[3;4;31m$*\\033[m"
 }
 
-echoYellow() {
+logWarning() {
     echo -e "\\033[33m$*\\033[m"
 }
 
-echoGreen() {
+logInfo() {
     echo -e "\\033[32m$*\\033[m"
 }
 
-echoRed() {
+logError() {
     echo -e "\\033[31m$*\\033[m"
 }
 
-echoCyan() {
+logProgress() {
     echo -e "\\033[36m$*\\033[m"
 }
 
@@ -105,7 +104,7 @@ echoCyan() {
 ####################################### FUNCTIONS #########################################
 #############################################################################################
 
-prerequists=("zsh" "git" "wget" "bat" "curl" "python3-pip")
+prerequists=("zsh" "git" "wget" "bat" "curl" "python3-pip" "fontconfig")
 missing_packages=()
 
 detect_missing_packages() {
@@ -118,9 +117,9 @@ detect_missing_packages() {
 
 perform_update() {
     if sudo apt update || sudo pacman -Sy || sudo dnf check-update || sudo yum check-update || brew update || pkg update; then
-        echoGreen "System updated\n"
+        logInfo "System updated\n"
     else
-        echoRed "System update failed\n"
+        logError "System update failed\n"
     fi
 }
 
@@ -129,9 +128,9 @@ install_missing_packages() {
     perform_update
     for package in "${missing_packages[@]}"; do
         if sudo apt install -y "$package" || sudo pacman -S "$package" || sudo dnf install -y "$package" || sudo yum install -y "$package" || sudo brew install "$package" || pkg install "$package"; then
-            echoGreen "$package Installed\n"
+            logInfo "$package Installed\n"
         else
-            echoYellow "Please install the following packages first, then try again: $package \n" && exit
+            logWarning "🚨 Please install the following packages first, then try again: $package 🚨" && exit
         fi
     done
 }
@@ -139,7 +138,7 @@ install_missing_packages() {
 
 backup_existing_zshrc_config() {
     if mv -n $HOME/.zshrc $HOME/.zshrc-backup-"$(date +"%Y-%m-%d")"; then # backup .zshrc
-        echoGreen -e "Backed up the current .zshrc to .zshrc-backup-date\n"
+        logInfo -e "Backed up the current .zshrc to .zshrc-backup-date\n"
     fi
 }
 
@@ -147,12 +146,12 @@ backup_existing_zshrc_config() {
 # git -C checks if the directory exists and runs the command in that directory
 configure_ohmzsh() {
     if [ -d "$OH_MY_ZSH_FOLDER" ]; then
-        echoGreen "oh-my-zsh is already installed\n"
+        logInfo "✅ oh-my-zsh is already installed\n"
         git -C "$OH_MY_ZSH_FOLDER" remote set-url origin "$OH_MY_ZSHR_REPO"
-         export ZSH=$OH_MY_ZSH_FOLDER;
+        export ZSH=$OH_MY_ZSH_FOLDER;
         git -C "$OH_MY_ZSH_FOLDER" pull
     elif [ -d "$HOME/.oh-my-zsh" ]; then
-        echoCyan "oh-my-zsh in already installed at '$HOME/.oh-my-zsh'. Moving it to '$HOME/.config/czsh/oh-my-zsh'"
+        logProgress "⏳ oh-my-zsh is already installed at '$HOME/.oh-my-zsh'. Moving it to '$HOME/.config/czsh/oh-my-zsh'"
         export ZSH=$OH_MY_ZSH_FOLDER;
         mv "$HOME/.oh-my-zsh" "$OH_MY_ZSH_FOLDER"
         git -C "$OH_MY_ZSH_FOLDER" remote set-url origin "$OH_MY_ZSHR_REPO"
@@ -160,24 +159,22 @@ configure_ohmzsh() {
     else
         git clone --depth=1 $OH_MY_ZSHR_REPO "$OH_MY_ZSH_FOLDER"
         export ZSH=$OH_MY_ZSH_FOLDER;
-
     fi
 }
 
 configure_autosuggestions() {
     if [ -d "$ZSH_AUTOSUGGESTION_PATH" ]; then
         git -C "$ZSH_AUTOSUGGESTION_PATH" pull
-        echoGreen "zsh-autosuggestions updated\n"
+        logInfo "✅ zsh-autosuggestions updated\n"
     else
         git clone --depth=1 $AUTOSUGGESTIONS_PLUGIN_REPO "$ZSH_AUTOSUGGESTION_PATH"
-        echoGreen "zsh-autosuggestions installed\n"
+        logInfo "✅ zsh-autosuggestions installed\n"
     fi
-
 }
 
 configure_zsh_codex() {
     
-    echoCyan "configuring zsh_codex\n"
+    logProgress "configuring zsh_codex\n"
     cp openaiapirc $HOME/.config/
 
     read -s -p "Enter your openai api key: "
@@ -267,7 +264,7 @@ install_marker() {
 
 install_todo() {
     if [ ! -L $HOME/.config/czsh/todo/bin/todo.sh ]; then
-        echoGreen "Installing todo.sh in $HOME/.config/czsh/todo\n"
+        logInfo "Installing todo.sh in $HOME/.config/czsh/todo\n"
         mkdir -p $HOME/.config/czsh/bin
         mkdir -p $HOME/.config/czsh/todo
         wget -q --show-progress "https://github.com/todotxt/todo.txt-cli/releases/download/v2.12.0/todo.txt_cli-2.12.0.tar.gz" -P $HOME/.config/czsh/
@@ -295,24 +292,24 @@ copy_history() {
             fi
         fi
     else
-        echoYellow "\nNot copying bash_history to zsh_history, as --cp-hist or -c is not supplied\n"
+        logWarning "\nNot copying bash_history to zsh_history, as --cp-hist or -c is not supplied\n"
     fi
 }
 
 finish_installation() {
-    echoGreen "Installation complete\n"
+    logInfo "Installation complete\n"
     if [ "$noninteractive_flag" = true ]; then
-        echoGreen "Installation complete, exit terminal and enter a new zsh session\n"
-        echoYellow "Make sure to change zsh to default shell by running: chsh -s $(which zsh)"
-        echoGreen "In a new zsh session manually run: build-fzf-tab-module"
+        logInfo "Installation complete, exit terminal and enter a new zsh session\n"
+        logWarning "Make sure to change zsh to default shell by running: chsh -s $(which zsh)"
+        logInfo "In a new zsh session manually run: build-fzf-tab-module"
     else
-        echoYellow "\nSudo access is needed to change default shell\n"
+        logWarning "\nSudo access is needed to change default shell\n"
 
         if chsh -s "$(which zsh)" && /bin/zsh -i -c 'omz update'; then
-            echoGreen "Installation complete, exit terminal and enter a new zsh session"
-            echoYellow "In a new zsh session manually run: build-fzf-tab-module"
+            logInfo "Installation complete, exit terminal and enter a new zsh session"
+            logWarning "In a new zsh session manually run: build-fzf-tab-module"
         else
-            echoIULRed "Something is wrong, the password you entered might be wrong\n"
+            logError "Something is wrong, the password you entered might be wrong\n"
 
         fi
     fi
@@ -331,13 +328,13 @@ install_missing_packages
 
 backup_existing_zshrc_config
 
-echoGreen "The setup will be installed in '$HOME/.config/czsh'\n"
+logInfo "The setup will be installed in '$HOME/.config/czsh'\n"
 
-echoYellow "Place your personal zshrc config files under '$HOME/.config/czsh/zshrc/'\n"
+logWarning "Place your personal zshrc config files under '$HOME/.config/czsh/zshrc/'\n"
 
 mkdir -p $HOME/.config/czsh/zshrc
 
-echoGreen "Installing oh-my-zsh\n"
+logInfo "Installing oh-my-zsh\n"
 
 configure_ohmzsh
 
@@ -365,12 +362,11 @@ if [ "$zsh_codex_flag" = true ]; then
     configure_zsh_codex 
 fi
 
-
 install_powerlevel10k
 
 install_marker
 
-echoCyan "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono\n"
+logProgress "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono\n"
 
 if [ ! -f $HOME/.fonts/HackNerdFont-Regular.ttf ]; then
     wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/HackNerdFont-Regular.ttf -P $HOME/.fonts/

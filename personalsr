@@ -1,5 +1,0 @@
-
-
-plugins+=(zsh_codex)
-source "$ZSH_CUSTOM/plugins/zsh_codex/zsh_codex.plugin.zsh"
-bindkey '^X' create_completion
