@@ -55,9 +55,6 @@ In a new Zsh session, manually run:
 source ~/.zshrc
 ```
 
-## Logs
-Installation logs are available in log.txt.
-
 ## License
 This project is licensed under the MIT License.
 

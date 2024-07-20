@@ -238,10 +238,10 @@ install_powerlevel10k() {
 install_lazydocker() {
     if [ -d $LAZYDOCKER_INSTALLATION_PATH ]; then
         git -C $LAZYDOCKER_INSTALLATION_PATH pull
-        $LAZYDOCKER_INSTALLATION_PATH/install_update_linux.sh
+        $LAZYDOCKER_INSTALLATION_PATH/scripts/install_update_linux.sh
     else
         git clone --depth 1 $LAZYDOCKER_REPO $LAZYDOCKER_INSTALLATION_PATH
-        $LAZYDOCKER_INSTALLATION_PATH/install_update_linux.sh
+        $LAZYDOCKER_INSTALLATION_PATH/scripts/install_update_linux.sh
     fi
 }
 
