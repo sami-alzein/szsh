@@ -8,8 +8,8 @@ zsh_codex_flag=false
 
 OH_MY_ZSH_FOLDER="$HOME/.config/czsh/oh-my-zsh"
 OHMYZSH_PLUGIN_PATH="$OH_MY_ZSH_FOLDER/plugins"
-OHMYZSH_CUSTOM_PLUGIN_PATH="$OH_MY_ZSH_FOLDER/plugins"
-OHMYZSH_CUSTOM_THEME_PATH="$OH_MY_ZSH_FOLDER/themes"
+OHMYZSH_CUSTOM_PLUGIN_PATH="$OH_MY_ZSH_FOLDER/custom/plugins"
+OHMYZSH_CUSTOM_THEME_PATH="$OH_MY_ZSH_FOLDER/custom/themes"
 
 #############################################################################################
 ######################################### VARIABLES #########################################
@@ -178,6 +178,7 @@ configure_autosuggestions() {
 configure_zsh_codex() {
     
     echoCyan "configuring zsh_codex\n"
+    cp openaiapirc $HOME/.config/
 
     # export BASE_URL=${BASE_URL:-"https://api.groq.com/openai/v1"}
     # export MODEL=${MODEL:-"https://api.groq.com/openai/v1"}
@@ -203,7 +204,7 @@ configure_zsh_codex() {
 configure_syntax_highlighting() {
 
     if [ -d "$ZSH_SYNTAX_HIGHLIGHTING_PATH" ]; then
-        cd "$ZSH_SYNTAX_HIGHLIGHTING_PATH" && git pull
+     git -C $ZSH_SYNTAX_HIGHLIGHTING_PATH pull
     else
         git clone --depth=1 $ZSH_SYNTAX_HIGHLIGHTING_REPO $ZSH_SYNTAX_HIGHLIGHTING_PATH
     fi
@@ -219,7 +220,7 @@ configure_zsh_completions() {
 
 configure_zsh_history_substring_search() {
     if [ -d $ZSH_HISTORY_SUBSTRING_PLUGIN_PATH ]; then
-        cd $ZSH_HISTORY_SUBSTRING_PLUGIN_PATH && git pull
+        git -C $ZSH_HISTORY_SUBSTRING_PLUGIN_PATH pull 
     else
         git clone --depth=1 $ZSH_HISTORY_SUBSTRING_SEARCH_REPO $ZSH_HISTORY_SUBSTRING_PLUGIN_PATH
     fi
@@ -238,7 +239,7 @@ install_fzf() {
 
 install_powerlevel10k() {
     if [ -d $POWERLEVEL_10K_PATH ]; then
-        cd $POWERLEVEL_10K_PATH && git pull
+        git -C $POWERLEVEL_10K_PATH pull
     else
         git clone --depth=1 $POWERLEVEL10K_REPO $POWERLEVEL_10K_PATH
     fi
@@ -246,7 +247,7 @@ install_powerlevel10k() {
 
 install_lazydocker() {
     if [ -d $LAZYDOCKER_INSTALLATION_PATH ]; then
-        cd $LAZYDOCKER_INSTALLATION_PATH && git pull
+        git -C $LAZYDOCKER_INSTALLATION_PATH pull
         $LAZYDOCKER_INSTALLATION_PATH/install_update_linux.sh
     else
         git clone --depth 1 $LAZYDOCKER_REPO $LAZYDOCKER_INSTALLATION_PATH
@@ -256,7 +257,7 @@ install_lazydocker() {
 
 install_fzf_tab() {
     if [ -d "$FZF_TAB_PLUGIN_PATH" ]; then
-        cd "$FZF_TAB_PLUGIN_PATH" && git pull
+        git -C "$FZF_TAB_PLUGIN_PATH" pull
     else
         git clone --depth 1 $FZF_TAB_REPO $FZF_TAB_PLUGIN_PATH
     fi
@@ -347,8 +348,7 @@ echoGreen "Installing oh-my-zsh\n"
 
 configure_ohmzsh
 
-pwd
-ls
+
 cp -f ./.zshrc $HOME/
 cp -f ./czshrc.zsh $HOME/.config/czsh/
 

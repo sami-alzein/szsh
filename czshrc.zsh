@@ -3,7 +3,7 @@ export TERM="xterm-256color"
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH_CUSTOM="$HOME/.config/czsh/oh-my-zsh"
+export ZSH_CUSTOM="$HOME/.config/czsh/oh-my-zsh/custom"
 export ZSH="$HOME/.config/czsh/oh-my-zsh";
 
 # Set name of the theme to load. Optionally, if you set this to "random"
@@ -50,8 +50,8 @@ plugins=(
     docker
 )
 
-#source "$ZSH_CUSTOM/plugins/zsh_codex/zsh_codex.plugin.zsh"
-#bindkey '^X' create_completion
+source "$ZSH_CUSTOM/plugins/zsh_codex/zsh_codex.plugin.zsh"
+bindkey '^X' create_completion
 
 export PATH=$PATH:~/.local/bin
 
