@@ -12,12 +12,5 @@
 				"GitHub.copilot"
 			]
 		}
-	},
-	// "mounts": [
-	// 	{
-	// 		"source": "${env:HOME}/.gitconfig",
-	// 		"target": "/vscode/.gitconfig",
-	// 		"type": "bind"
-	// 	}
-	// ]
+	}
 }

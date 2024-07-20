@@ -23,7 +23,7 @@ POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=( status command_execution_time background_jo
 # (public_ip docker_machine pyenv nvm)          https://github.com/bhilburn/powerlevel9k#prompt-customization
 # Note: using public_ip is cool but when connection is down prompt waits for 10-20 seconds
 
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
 
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 
@@ -116,6 +116,7 @@ ipgeo() {
         curl "http://api.db-ip.com/v2/free/$(myip)"
     fi
 }
+f() { find . -type f -print0 | fzf --read0 --preview 'batcat --color=always {}' | xargs -0 file -b; }
 
 
 alias kp='ps -ef | fzf --multi | awk '\''{print $2}'\'' | xargs sudo kill -9'

@@ -186,7 +186,7 @@ configure_zsh_codex() {
     if [ -d "$ZSH_CODEX_PLUGIN_PATH" ]; then
         git -C "$ZSH_CODEX_PLUGIN_PATH" pull
     else
-        pip3 install openai
+        pip3 install openai 
         git clone --depth=1 "$ZHS_CODEX_PLUGIN_REPO" "$ZSH_CODEX_PLUGIN_PATH"
     fi
 }
