@@ -9,51 +9,19 @@ zsh_codex_flag=false
 OH_MY_ZSH_FOLDER="$HOME/.config/czsh/oh-my-zsh"
 OHMYZSH_CUSTOM_PLUGIN_PATH="$OH_MY_ZSH_FOLDER/custom/plugins"
 OHMYZSH_CUSTOM_THEME_PATH="$OH_MY_ZSH_FOLDER/custom/themes"
-
-#############################################################################################
-######################################### VARIABLES #########################################
-#############################################################################################
-
-
 OH_MY_ZSHR_REPO="https://github.com/ohmyzsh/ohmyzsh.git"
-AUTOSUGGESTIONS_PLUGIN_REPO="https://github.com/zsh-users/zsh-autosuggestions.git"
-ZHS_CODEX_PLUGIN_REPO="https://github.com/tom-doerr/zsh_codex.git"
-ZSH_SYNTAX_HIGHLIGHTING_REPO="https://github.com/zsh-users/zsh-syntax-highlighting.git"
-ZSH_COMPLETIONS_REPO="https://github.com/zsh-users/zsh-completions.git"
-ZSH_HISTORY_SUBSTRING_SEARCH_REPO="https://github.com/zsh-users/zsh-history-substring-search.git"
-POWERLEVEL10K_REPO="https://github.com/romkatv/powerlevel10k.git"
+POWERLEVEL10K=("powerlevel10k" "https://github.com/romkatv/powerlevel10k.git")
 
-
-
-################################################################################################
-####################################### PROGRAMS REPOS #########################################
-################################################################################################
+###################### SOURCE FILES ######################
+source ./utils.sh
+source ./plugins.sh
+##########################################################
 
 
 FZF_REPO="https://github.com/junegunn/fzf.git"
-FZF_TAB_REPO="https://github.com/Aloxaf/fzf-tab.git"
 LAZYDOCKER_REPO="https://github.com/jesseduffield/lazydocker.git"
-MARKER_REPO="https://github.com/jotyGill/marker.git"
-
-################################################################################################
-####################################### PLUGIN PATHS ###########################################
-################################################################################################
-
-FZF_TAB_PLUGIN_PATH="$OHMYZSH_CUSTOM_PLUGIN_PATH/fzf-tab"
-ZSH_SYNTAX_HIGHLIGHTING_PATH="$OHMYZSH_CUSTOM_PLUGIN_PATH/zsh-syntax-highlighting"
-ZSH_AUTOSUGGESTION_PATH="$OHMYZSH_CUSTOM_PLUGIN_PATH/zsh-autosuggestions"
-ZSH_CODEX_PLUGIN_PATH="$OHMYZSH_CUSTOM_PLUGIN_PATH/zsh_codex"
-ZSH_COMPLETION_PLUGIN_PATH="$OHMYZSH_CUSTOM_PLUGIN_PATH/zsh-completions"
-ZSH_HISTORY_SUBSTRING_PLUGIN_PATH=$OHMYZSH_CUSTOM_PLUGIN_PATH/zsh-history-substring-search
-
-POWERLEVEL_10K_PATH=$OHMYZSH_CUSTOM_THEME_PATH/powerlevel10k
-
-################################################################################################
-####################################### INSTALLATION PATHS #####################################
-################################################################################################
 FZF_INSTALLATION_PATH=$HOME/.config/czsh/fzf    
 LAZYDOCKER_INSTALLATION_PATH=$HOME/.config/czsh/lazydocker
-MARKER_PATH=$HOME/.config/czsh/marker
 
 
 # Loop through all arguments
@@ -76,29 +44,7 @@ done
 
 
 
-#############################################################################################
-####################################### Utilities ###########################################
-#############################################################################################
 
-echoIULRed() {
-    echo -e "\\033[3;4;31m$*\\033[m"
-}
-
-logWarning() {
-    echo -e "\\033[33m$*\\033[m"
-}
-
-logInfo() {
-    echo -e "\\033[32m$*\\033[m"
-}
-
-logError() {
-    echo -e "\\033[31m$*\\033[m"
-}
-
-logProgress() {
-    echo -e "\\033[36m$*\\033[m"
-}
 
 #############################################################################################
 ####################################### FUNCTIONS #########################################
@@ -121,6 +67,20 @@ perform_update() {
     else
         logError "System update failed\n"
     fi
+}
+
+setup_plugins(){
+    for PLUGIN_NAME in "${!PLUGINS_MAP[@]}"; do
+         PLUGIN_PATH="$OHMYZSH_CUSTOM_PLUGIN_PATH/$PLUGIN_NAME"
+         if [ -d "$PLUGIN_PATH" ]; then
+              logInfo "✅ $PLUGIN_NAME plugin is already installed"
+              git -C "$PLUGIN_PATH" pull
+         else
+              PLUGIN_REPO_LINK="${PLUGINS_MAP[$PLUGIN_NAME]}"
+              git clone --depth=1 $PLUGIN_REPO_LINK $PLUGIN_PATH
+              logInfo "✅ $PLUGIN_NAME plugin installed"
+         fi
+    done
 }
 
 
@@ -162,15 +122,7 @@ configure_ohmzsh() {
     fi
 }
 
-configure_autosuggestions() {
-    if [ -d "$ZSH_AUTOSUGGESTION_PATH" ]; then
-        git -C "$ZSH_AUTOSUGGESTION_PATH" pull
-        logInfo "✅ zsh-autosuggestions updated\n"
-    else
-        git clone --depth=1 $AUTOSUGGESTIONS_PLUGIN_REPO "$ZSH_AUTOSUGGESTION_PATH"
-        logInfo "✅ zsh-autosuggestions installed\n"
-    fi
-}
+
 
 configure_zsh_codex() {
     
@@ -191,30 +143,6 @@ configure_zsh_codex() {
     fi
 }
 
-configure_syntax_highlighting() {
-
-    if [ -d "$ZSH_SYNTAX_HIGHLIGHTING_PATH" ]; then
-     git -C $ZSH_SYNTAX_HIGHLIGHTING_PATH pull
-    else
-        git clone --depth=1 $ZSH_SYNTAX_HIGHLIGHTING_REPO $ZSH_SYNTAX_HIGHLIGHTING_PATH
-    fi
-}
-
-configure_zsh_completions() {
-    if [ -d $ZSH_COMPLETION_PLUGIN_PATH ]; then
-        git -C $ZSH_COMPLETION_PLUGIN_PATH pull
-    else
-        git clone --depth=1 $ZSH_COMPLETIONS_REPO $ZSH_COMPLETION_PLUGIN_PATH
-    fi
-}
-
-configure_zsh_history_substring_search() {
-    if [ -d $ZSH_HISTORY_SUBSTRING_PLUGIN_PATH ]; then
-        git -C $ZSH_HISTORY_SUBSTRING_PLUGIN_PATH pull 
-    else
-        git clone --depth=1 $ZSH_HISTORY_SUBSTRING_SEARCH_REPO $ZSH_HISTORY_SUBSTRING_PLUGIN_PATH
-    fi
-}
 
 install_fzf() {
     if [ -d $FZF_INSTALLATION_PATH ]; then
@@ -245,22 +173,8 @@ install_lazydocker() {
     fi
 }
 
-install_fzf_tab() {
-    if [ -d "$FZF_TAB_PLUGIN_PATH" ]; then
-        git -C "$FZF_TAB_PLUGIN_PATH" pull
-    else
-        git clone --depth 1 $FZF_TAB_REPO $FZF_TAB_PLUGIN_PATH
-    fi
-}
 
-install_marker() {
-    if [ -d $MARKER_PATH ]; then
-        git -C $MARKER_PATH pull
-    else
-        git clone --depth 1 $MARKER_REPO $HOME/.config/czsh/marker
-    fi
 
-}
 
 install_todo() {
     if [ ! -L $HOME/.config/czsh/todo/bin/todo.sh ]; then
@@ -325,7 +239,6 @@ detect_missing_packages
 
 install_missing_packages
 
-
 backup_existing_zshrc_config
 
 logInfo "The setup will be installed in '$HOME/.config/czsh'\n"
@@ -350,21 +263,16 @@ if [ -f $HOME/.zcompdump ]; then
     mv $HOME/.zcompdump* $HOME/.cache/zsh/
 fi
 
-configure_autosuggestions
 
-configure_syntax_highlighting
 
-configure_zsh_completions
-
-configure_zsh_history_substring_search
 
 if [ "$zsh_codex_flag" = true ]; then
     configure_zsh_codex 
 fi
 
+
 install_powerlevel10k
 
-install_marker
 
 logProgress "Installing Nerd Fonts version of Hack, Roboto Mono, DejaVu Sans Mono\n"
 
@@ -386,10 +294,7 @@ install_fzf
 
 install_lazydocker
 
-
-install_fzf_tab
-
-install_marker
+setup_plugins
 
 install_todo
 

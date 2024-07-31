@@ -45,6 +45,7 @@ plugins=(
     sudo
     docker
     fzf-tab
+    forgit
 )
 
 if [[ -f $ZSH_CUSTOM/plugins/zsh_codex/zsh_codex.plugin.zsh ]]; then
