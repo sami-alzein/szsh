@@ -24,14 +24,12 @@ OHMYZSH_CUSTOM_THEME_PATH="$OH_MY_ZSH_FOLDER/custom/themes"
 
 
 OH_MY_ZSHR_REPO="https://github.com/ohmyzsh/ohmyzsh.git"
-ZHS_CODEX_PLUGIN_REPO="https://github.com/tom-doerr/zsh_codex.git"
 POWERLEVEL10K_REPO="https://github.com/romkatv/powerlevel10k.git"
 POWERLEVEL_10K_PATH=$OHMYZSH_CUSTOM_THEME_PATH/powerlevel10k
 
 
 FZF_REPO="https://github.com/junegunn/fzf.git"
 LAZYDOCKER_REPO="https://github.com/jesseduffield/lazydocker.git"
-ZSH_CODEX_PLUGIN_PATH="$OHMYZSH_CUSTOM_PLUGIN_PATH/zsh_codex"
 POWERLEVEL_10K_PATH=$OHMYZSH_CUSTOM_THEME_PATH/powerlevel10k
 
 FZF_INSTALLATION_PATH=$HOME/.config/czsh/fzf    
@@ -49,6 +47,7 @@ export PLUGINS_MAP=(
     ["zsh_codex"]="https://github.com/tom-doerr/zsh_codex.git"
     ["zsh-completions"]="https://github.com/zsh-users/zsh-completions.git"
     ["history-substring-search"]="https://github.com/zsh-users/zsh-history-substring-search.git"
+    ["forgit"]="https://github.com/wfxr/forgit.git"
 )
 
 
@@ -162,14 +161,7 @@ configure_zsh_codex() {
     OPENAI_API_KEY=$REPLY
 
     sed -i "s/TOBEREPLEACED/$OPENAI_API_KEY/g" $HOME/.config/openaiapirc
-
-
-    if [ -d "$ZSH_CODEX_PLUGIN_PATH" ]; then
-        git -C "$ZSH_CODEX_PLUGIN_PATH" pull
-    else
-        pip3 install openai 
-        git clone --depth=1 "$ZHS_CODEX_PLUGIN_REPO" "$ZSH_CODEX_PLUGIN_PATH"
-    fi
+    pip3 install openai --break-system-packages
 }
 
 
@@ -179,27 +171,29 @@ install_fzf() {
         $FZF_INSTALLATION_PATH/install --all --key-bindings --completion --no-update-rc
     else
         git clone --depth 1 $FZF_REPO $FZF_INSTALLATION_PATH
-        $FZF_INSTALLATION_PATH/install --all --key-bindings --completion --no-update-rc
+        "$FZF_INSTALLATION_PATH"/install --all --key-bindings --completion --no-update-rc
     fi
 
 }
 
 install_powerlevel10k() {
-    if [ -d $POWERLEVEL_10K_PATH ]; then
-        git -C $POWERLEVEL_10K_PATH pull
+    if [ -d "$POWERLEVEL_10K_PATH" ]; then
+        git -C "$POWERLEVEL_10K_PATH" pull
     else
-        git clone --depth=1 $POWERLEVEL10K_REPO $POWERLEVEL_10K_PATH
+        git clone --depth=1 $POWERLEVEL10K_REPO "$POWERLEVEL_10K_PATH"
     fi
 }
 
 install_lazydocker() {
-    if [ -d $LAZYDOCKER_INSTALLATION_PATH ]; then
+    if [ -d "$LAZYDOCKER_INSTALLATION_PATH" ]; then
         git -C $LAZYDOCKER_INSTALLATION_PATH pull
-        $LAZYDOCKER_INSTALLATION_PATH/scripts/install_update_linux.sh
+        "$LAZYDOCKER_INSTALLATION_PATH"/scripts/install_update_linux.sh
     else
-        git clone --depth 1 $LAZYDOCKER_REPO $LAZYDOCKER_INSTALLATION_PATH
-        $LAZYDOCKER_INSTALLATION_PATH/scripts/install_update_linux.sh
+        git clone --depth 1 $LAZYDOCKER_REPO "$LAZYDOCKER_INSTALLATION_PATH"
+        "$LAZYDOCKER_INSTALLATION_PATH"/scripts/install_update_linux.sh
     fi
+    sleep 3
+
 }
 
 
@@ -291,8 +285,6 @@ mkdir -p $HOME/.fonts             # Create .fonts if doesn't exist
 if [ -f $HOME/.zcompdump ]; then
     mv $HOME/.zcompdump* $HOME/.cache/zsh/
 fi
-
-
 
 
 if [ "$zsh_codex_flag" = true ]; then

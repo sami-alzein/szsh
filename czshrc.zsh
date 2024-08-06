@@ -45,6 +45,7 @@ plugins=(
     sudo
     docker
     fzf-tab
+    forgit
 )
 
 if [[ -f $ZSH_CUSTOM/plugins/zsh_codex/zsh_codex.plugin.zsh ]]; then
@@ -96,26 +97,6 @@ speedtest() {
 }
 
 
-# Find dictionary definition
-dict() {
-    if [ "$3" ]; then
-        curl "dict://dict.org/d:$1 $2 $3"
-    elif [ "$2" ]; then
-        curl "dict://dict.org/d:$1 $2"
-    else
-        curl "dict://dict.org/d:$1"
-    fi
-}
-
-# Find geo info from IP
-ipgeo() {
-    # Specify ip or your ip will be used
-    if [ "$1" ]; then
-        curl "http://api.db-ip.com/v2/free/$1"
-    else
-        curl "http://api.db-ip.com/v2/free/$(myip)"
-    fi
-}
 f() { find . -type f -print0 | fzf --read0 --preview 'batcat --color=always {}' | xargs -0 file -b; }
 
 
