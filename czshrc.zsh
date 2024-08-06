@@ -82,7 +82,7 @@ alias ip="ip --color=auto"
 cheat() {
     if [ "$2" ]; then
         curl "https://cheat.sh/$1/$2+$3+$4+$5+$6+$7+$8+$9+$10"
-    else
+        else
         curl "https://cheat.sh/$1"
     fi
 }
